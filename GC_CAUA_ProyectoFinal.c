@@ -99,20 +99,21 @@ void dibujarpersonaje(struct NodoArbol *raiz)
         glBegin(GL_POLYGON);
         	for(;aux != NULL; aux = aux->sig)
         	{
-	            glVertex3f(aux->coordenadas[0]*10, aux->coordenadas[1]*10,0.0);
+	            glVertex3f(aux->coordenadas[0]*5, aux->coordenadas[1]*5,0.0);
         	}	
         glEnd();
 
     glColor3f(0.0,0.0,0.0);
-    glLineWidth(8.0f);
+    glLineWidth(5.0f);
     aux = raiz->parte;
     glBegin(GL_LINE_LOOP);
         	for(;aux != NULL; aux = aux->sig)
         	{
-	            glVertex3f(aux->coordenadas[0]*10, aux->coordenadas[1]*10,0.0);
+	            glVertex3f(aux->coordenadas[0]*5, aux->coordenadas[1]*5,0.0);
 	            //glVertex3f(aux->sig->coordenadas[0]*20, aux->sig->coordenadas[1]*20,0.0);
         	}	
         glEnd();
+
 	dibujarpersonaje(raiz->der);
 }
 
@@ -123,7 +124,7 @@ void iniciarpersonaje(struct NodoArbol **raiz)
 	ListinsertarParte(&((*raiz)->parte),11,14);
 	ListinsertarParte(&((*raiz)->parte),11,10);
 	ListinsertarParte(&((*raiz)->parte),13,10);
-	ListinsertarParte(&((*raiz)->parte),13,10);
+	ListinsertarParte(&((*raiz)->parte),13,13);
 
 	insertarNodoArbol(&((*raiz)->izq),aux,"Cuerpo");
 	ListinsertarParte(&((*raiz)->izq->parte),8,21);
@@ -155,8 +156,8 @@ void iniciarpersonaje(struct NodoArbol **raiz)
 	ListinsertarParte(&((*raiz)->izq->parte),25,19);
 	ListinsertarParte(&((*raiz)->izq->parte),25,21);
 	ListinsertarParte(&((*raiz)->izq->parte),24,22);
-	ListinsertarParte(&((*raiz)->izq->parte),19,22);
-	ListinsertarParte(&((*raiz)->izq->parte),19,23);
+	ListinsertarParte(&((*raiz)->izq->parte),18,22);
+	ListinsertarParte(&((*raiz)->izq->parte),18,23);
 
 	insertarNodoArbol(&((*raiz)->izq->izq),aux,"Pieizq");
 	ListinsertarParte(&((*raiz)->izq->izq->parte),16,6);
@@ -183,14 +184,73 @@ void iniciarpersonaje(struct NodoArbol **raiz)
 	ListinsertarParte(&((*raiz)->izq->der->parte),12,21);
 	ListinsertarParte(&((*raiz)->izq->der->parte),12,20);
 
+	aux[0]=0.33;
+	aux[1]=0.15;
+	aux[2]=0.456;
+	insertarNodoArbol(&((*raiz)->der),aux,"sombreropico");
+	ListinsertarParte(&((*raiz)->der->parte),7,21);
+	ListinsertarParte(&((*raiz)->der->parte),7,26);
+	ListinsertarParte(&((*raiz)->der->parte),6,26);
+	ListinsertarParte(&((*raiz)->der->parte),6,27);
+	ListinsertarParte(&((*raiz)->der->parte),5,27);
+	ListinsertarParte(&((*raiz)->der->parte),5,28);
+	ListinsertarParte(&((*raiz)->der->parte),4,28);
+	ListinsertarParte(&((*raiz)->der->parte),4,27);
+	ListinsertarParte(&((*raiz)->der->parte),3,27);
+	ListinsertarParte(&((*raiz)->der->parte),2,28);
+	ListinsertarParte(&((*raiz)->der->parte),1,28);
+	ListinsertarParte(&((*raiz)->der->parte),2,29);
+	ListinsertarParte(&((*raiz)->der->parte),4,30);
+	ListinsertarParte(&((*raiz)->der->parte),6,31);
+	ListinsertarParte(&((*raiz)->der->parte),7,31);
+	ListinsertarParte(&((*raiz)->der->parte),9,30);
+	ListinsertarParte(&((*raiz)->der->parte),11,29);
+	ListinsertarParte(&((*raiz)->der->parte),11,28);
+	ListinsertarParte(&((*raiz)->der->parte),12,28);
+	ListinsertarParte(&((*raiz)->der->parte),12,27);
+	ListinsertarParte(&((*raiz)->der->parte),13,27);
+	ListinsertarParte(&((*raiz)->der->parte),13,26);
+	ListinsertarParte(&((*raiz)->der->parte),14,26);
+	ListinsertarParte(&((*raiz)->der->parte),15,25);
+
+	insertarNodoArbol(&((*raiz)->der->der),aux,"sombrerobase");
+	ListinsertarParte(&((*raiz)->der->der->parte),7,18);
+	ListinsertarParte(&((*raiz)->der->der->parte),8,19);
+	ListinsertarParte(&((*raiz)->der->der->parte),9,20);
+	ListinsertarParte(&((*raiz)->der->der->parte),10,20);
+	ListinsertarParte(&((*raiz)->der->der->parte),11,21);
+	ListinsertarParte(&((*raiz)->der->der->parte),12,21);
+	ListinsertarParte(&((*raiz)->der->der->parte),13,22);
+	ListinsertarParte(&((*raiz)->der->der->parte),14,22);
+	ListinsertarParte(&((*raiz)->der->der->parte),15,23);
+	ListinsertarParte(&((*raiz)->der->der->parte),16,23);
+	ListinsertarParte(&((*raiz)->der->der->parte),18,23);
+	ListinsertarParte(&((*raiz)->der->der->parte),18,24);
+	ListinsertarParte(&((*raiz)->der->der->parte),19,24);
+	ListinsertarParte(&((*raiz)->der->der->parte),19,26);
+	ListinsertarParte(&((*raiz)->der->der->parte),16,26);
+	ListinsertarParte(&((*raiz)->der->der->parte),15,26);
+	ListinsertarParte(&((*raiz)->der->der->parte),14,25);
+	ListinsertarParte(&((*raiz)->der->der->parte),13,25);
+	ListinsertarParte(&((*raiz)->der->der->parte),13,24);
+	ListinsertarParte(&((*raiz)->der->der->parte),12,24);
+	ListinsertarParte(&((*raiz)->der->der->parte),11,23);
+	ListinsertarParte(&((*raiz)->der->der->parte),10,23);
+	ListinsertarParte(&((*raiz)->der->der->parte),9,22);
+	ListinsertarParte(&((*raiz)->der->der->parte),7,22);
+	ListinsertarParte(&((*raiz)->der->der->parte),6,21);
+	ListinsertarParte(&((*raiz)->der->der->parte),5,21);
+	ListinsertarParte(&((*raiz)->der->der->parte),5,18);
+
+
 	aux[0]=0.0;
 	aux[1]=0.0;
 	aux[2]=0.0;
 	insertarNodoArbol(&((*raiz)->der->izq),aux,"pupila");
-	ListinsertarParte(&((*raiz)->der->izq->parte),13,19);
-	ListinsertarParte(&((*raiz)->der->izq->parte),12,19);
-	ListinsertarParte(&((*raiz)->der->izq->parte),12,20);
-	ListinsertarParte(&((*raiz)->der->izq->parte),13,20);
+	ListinsertarParte(&((*raiz)->der->izq->parte),14,18);
+	ListinsertarParte(&((*raiz)->der->izq->parte),15,18);
+	ListinsertarParte(&((*raiz)->der->izq->parte),15,19);
+	ListinsertarParte(&((*raiz)->der->izq->parte),14,19);
 
 }
 
