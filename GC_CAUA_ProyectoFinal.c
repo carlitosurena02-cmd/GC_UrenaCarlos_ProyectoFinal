@@ -19,6 +19,16 @@ struct coordenada{
 	int y;
 };
 
+struct camino{
+	struct coordenada coord;
+	struct camino *sig;
+};
+
+struct Camino{
+	struct camino *inicio;
+	struct camino *final;
+};
+
 struct NodoCola{
 	int scene;
 	int textura;
@@ -29,15 +39,6 @@ struct NodoCola{
 struct Cola{
 	struct NodoCola *inicio;
 	struct NodoCola *final;
-};
-
-struct NodoPila{
-	struct NodoPila *sig;
-};
-
-struct Pila{
-	int tam;
-	struct NodoPila *top;
 };
 
 struct PartePersonaje{
@@ -52,8 +53,6 @@ struct NodoArbol{
 	struct NodoArbol *izq;
 	struct NodoArbol *der;
 };
-
-
 
 
 //Prototipos de funciones
@@ -71,22 +70,26 @@ GLuint CargarTextura(const char *ruta);
 struct NodoArbol *Raiz = NULL;
 struct NodoArbol *Aux = NULL;
 struct NodoArbol *Aux2 = NULL;
+struct camino *caminoaux;
 struct Cola Cola;
+struct Camino Camino;
 int texturapiso;
 int texturafondo;
 int caja;
 int gujero;
+int tesoro;
 int pasoAnim = 0;
+int escena = 0;
+int ventana = 0;
 
 
 void enqueue(struct Cola *cola, int tam, int x, int y, int escena,int textura)
 {
     struct NodoCola *nuevo = (struct NodoCola *)malloc(sizeof(struct NodoCola));
     
-    if(nuevo == NULL) {
-        printf("Error: No se pudo asignar memoria\n");
+    if(nuevo == NULL) 
         return;
-    }
+
     float dist = tam /2; 
     
     nuevo->coords[0].x = x - dist;
@@ -99,6 +102,28 @@ void enqueue(struct Cola *cola, int tam, int x, int y, int escena,int textura)
     nuevo->coords[3].y = y + dist;
     nuevo->scene = escena;
     nuevo->textura = textura;
+    nuevo->sig = NULL;
+    
+    // primer elemento de la cola
+    if(cola->inicio == NULL) {
+        cola->inicio = nuevo;
+        cola->final = nuevo;
+    }
+    else {
+        cola->final->sig = nuevo;
+        cola->final = nuevo;
+    }
+}
+
+void insertarcamino(struct Camino *cola, int x, int y)
+{
+    struct camino *nuevo = (struct camino *)malloc(sizeof(struct camino));
+    
+    if(nuevo == NULL)
+        return;
+    
+    nuevo->coord.x = x;
+    nuevo->coord.y = y;
     nuevo->sig = NULL;
     
     // primer elemento de la cola
@@ -417,24 +442,48 @@ void iniciarpersonaje(struct NodoArbol **raiz)
 void initobstaculos(struct Cola *cola)
 {
 	//Escena 1
-	enqueue(cola, 60, 350,130,1,caja);
-	enqueue(cola, 60, 410,130,1,caja);
-	enqueue(cola, 60, 410,190,1,caja);
-	enqueue(cola, 60, 470,130,1,caja);
-	enqueue(cola, 60, 470,190,1,caja);
-	enqueue(cola, 60, 470,250,1,caja);
-	enqueue(cola, 60, 530,130,1,caja);
-	enqueue(cola, 60, 530,190,1,caja);
-	enqueue(cola, 60, 530,250,1,caja);
-	enqueue(cola, 60, 530,310,1,caja);
-	enqueue(cola, 350,735,-75,1,gujero);
-	enqueue(cola, 60, 710,370,1,caja);
-	enqueue(cola, 60, 770,370,1,caja);
-	enqueue(cola, 60, 830,370,1,caja);
+	enqueue(cola, 60, 350,130,0,caja);
+	enqueue(cola, 60, 410,130,0,caja);
+	enqueue(cola, 60, 410,190,0,caja);
+	enqueue(cola, 60, 470,130,0,caja);
+	enqueue(cola, 60, 470,190,0,caja);
+	enqueue(cola, 60, 470,250,0,caja);
+	enqueue(cola, 60, 530,130,0,caja);
+	enqueue(cola, 60, 530,190,0,caja);
+	enqueue(cola, 60, 530,250,0,caja);
+	enqueue(cola, 60, 530,310,0,caja);
+	enqueue(cola, 350,735,-75,0,gujero);
+	enqueue(cola, 60, 710,370,0,caja);
+	enqueue(cola, 60, 770,370,0,caja);
+	enqueue(cola, 60, 830,370,0,caja);
 
 	//Escena 2
-	/*enqueue(cola, 900,450,-350,1,gujero);
-	enqueue(cola, 60, 470,190,1,caja);*/
+	enqueue(cola, 900,450,-350,1,gujero);
+	enqueue(cola, 60, 120,340,1,caja);
+	enqueue(cola, 60, 180,340,1,caja);
+	enqueue(cola, 60, 240,340,1,caja);
+	enqueue(cola, 60, 400,280,1,caja);
+	enqueue(cola, 60, 560,360,1,caja);
+	enqueue(cola, 60, 790,200,1,caja);
+	enqueue(cola, 60, 850,200,1,caja);
+
+	enqueue(cola, 900,450,-350,2,gujero);
+	enqueue(cola, 60, 80,300,2,caja);
+	enqueue(cola, 60, 140,300,2,caja);
+	enqueue(cola, 60, 200,300,2,caja);
+	enqueue(cola, 60, 260,300,2,caja);
+	enqueue(cola, 60, 320,300,2,caja);
+	enqueue(cola, 60, 380,300,2,caja);
+	enqueue(cola, 60, 440,300,2,caja);
+	enqueue(cola, 60, 500,300,2,caja); 
+	enqueue(cola, 60, 560,300,2,caja); 
+	enqueue(cola, 60, 620,300,2,caja);
+	enqueue(cola, 60, 680,300,2,caja);
+	enqueue(cola, 60, 740,300,2,caja);
+	enqueue(cola, 60, 800,300,2,caja);  
+	enqueue(cola, 60, 800,360,2,tesoro); 
+
+
 }
 
 void dibujarobstaculos(struct Cola *cola)
@@ -442,18 +491,19 @@ void dibujarobstaculos(struct Cola *cola)
 	struct NodoCola *aux = cola->inicio;
 	while(aux != NULL)
 	{
-		glColor3f(1.0, 1.0, 1.0);
-		glBindTexture(GL_TEXTURE_2D, aux->textura);
-	    glEnable(GL_TEXTURE_2D);
-	    glBegin(GL_QUADS);
-	        glTexCoord2f(0,0); glVertex2f(aux->coords[0].x,aux->coords[0].y);
-	        glTexCoord2f(1,0); glVertex2f(aux->coords[1].x,aux->coords[1].y);
-	        glTexCoord2f(1,1); glVertex2f(aux->coords[2].x,aux->coords[2].y);
-	        glTexCoord2f(0,1); glVertex2f(aux->coords[3].x,aux->coords[3].y);
-	    glEnd();
-	    glBindTexture(GL_TEXTURE_2D, 0);
-	    glDisable(GL_TEXTURE_2D);
-
+		if(aux->scene == escena){
+			glColor3f(1.0, 1.0, 1.0);
+			glBindTexture(GL_TEXTURE_2D, aux->textura);
+		    glEnable(GL_TEXTURE_2D);
+		    glBegin(GL_QUADS);
+		        glTexCoord2f(0,0); glVertex2f(aux->coords[0].x,aux->coords[0].y);
+		        glTexCoord2f(1,0); glVertex2f(aux->coords[1].x,aux->coords[1].y);
+		        glTexCoord2f(1,1); glVertex2f(aux->coords[2].x,aux->coords[2].y);
+		        glTexCoord2f(0,1); glVertex2f(aux->coords[3].x,aux->coords[3].y);
+		    glEnd();
+		    glBindTexture(GL_TEXTURE_2D, 0);
+		    glDisable(GL_TEXTURE_2D);
+		}
 	    aux = aux->sig;
 	}
 }
@@ -470,6 +520,76 @@ static void reshape01(int w, int h)
     glLoadIdentity();
     
     glutPostRedisplay();  // Forzar redibujado
+}
+
+void CrearCamino(struct Camino *camino)
+{
+	int y=0;
+	for(int x = 0; x <= 900; x+=3)
+	{	if(x == 210)
+			y = 10;
+
+		if((x > 210 && y < 60)||(x > 270 && y < 120) || (x > 330 && y < 180) || (x > 390 && y < 240))
+			y += 6;
+
+		if(x < 645)
+		{
+			if(x > 560 && y > 300)
+			{
+				y -= 3;
+			}else
+				if(x > 500 && y < 360)
+					y += 6;
+		}
+
+		if(x > 800 && y < 400)
+			y += 5;
+
+		insertarcamino(camino, x, y);
+	}
+
+	for(int x = 0; x<=900;x += 3)
+	{	if(x > 0 && x < 200 && y > 270)
+			y -=6;
+
+		if(x > 200 && x < 220)
+			y+= 6;	
+
+		if(x > 220 &&  x < 300)
+			y -=4;
+
+		if(x >370 && x < 520 && y < 280)
+			y+=3;
+
+		if(x > 520 && x < 540)
+			y+= 6;	
+
+		if(x > 540 &&  x < 730)
+			y -=3;
+
+		if(x > 800 &&  x < 900)
+			y += 3;
+
+		insertarcamino(camino, x, y);
+	}
+
+	for(int x = 0; x<=900;x += 3)
+	{
+		if(x >= 750 && x < 753)
+			{
+				insertarcamino(camino, x, 306);
+				insertarcamino(camino, x, 312);
+				insertarcamino(camino, x, 318);
+				insertarcamino(camino, x, 318);
+				insertarcamino(camino, x, 312);
+				insertarcamino(camino, x, 306);
+			}
+		if(x > 780)
+			y += 6;	
+		insertarcamino(camino, x, y);
+
+	}
+
 }
 
 void display() 
@@ -502,7 +622,138 @@ void display()
 
     dibujarobstaculos(&Cola);
 
-    dibujarpersonaje(Raiz);
+    glPushMatrix();
+	glTranslatef(caminoaux->coord.x, caminoaux->coord.y, 0);
+	dibujarpersonaje(Raiz);
+	glPopMatrix();
+
+    // intercambio de buffers (porque usamos GLUT_DOUBLE)
+    glutSwapBuffers();
+}
+
+void texto(char *texto,int x, int y, float color[],void* font)
+{
+	glColor3f(color[0], color[1], color[2]);
+	glRasterPos2f(x, y);
+	for(; *texto != '\0'; texto++)
+	glutBitmapCharacter(font, *texto);
+}
+
+
+void menu()
+{
+	glClear(GL_COLOR_BUFFER_BIT); // Limpia el búfer de color
+
+	glColor3f(1.0, 1.0, 1.0);
+    glBindTexture(GL_TEXTURE_2D, texturafondo);
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0,0); glVertex2f(0,700);
+        glTexCoord2f(1,0); glVertex2f(900,700);
+        glTexCoord2f(1,1); glVertex2f(900,0);
+        glTexCoord2f(0,1); glVertex2f(0,0);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+
+    float aux[3] = {0.0,0.0,0.0};
+    texto("LA AVENTURA DE GLEEP",300,600,aux,GLUT_BITMAP_TIMES_ROMAN_24);
+
+    glColor3f(1.0, 1.0, 1.0);
+    glBindTexture(GL_TEXTURE_2D, texturapiso);
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0,0); glVertex2f(250,300);
+        glTexCoord2f(1,0); glVertex2f(650,300);
+        glTexCoord2f(1,1); glVertex2f(650,400);
+        glTexCoord2f(0,1); glVertex2f(250,400);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+
+    aux[0]=1.0;
+	aux[1]=1.0;
+	aux[2]=1.0;
+
+	texto("REPRODUCIR (enter)",340,340,aux,GLUT_BITMAP_TIMES_ROMAN_24);
+
+    glColor3f(1.0, 1.0, 1.0);
+    glBindTexture(GL_TEXTURE_2D, texturapiso);
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0,0); glVertex2f(250,100);
+        glTexCoord2f(1,0); glVertex2f(650,100);
+        glTexCoord2f(1,1); glVertex2f(650,200);
+        glTexCoord2f(0,1); glVertex2f(250,200);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+
+    texto("SALIR (S)",400,140,aux,GLUT_BITMAP_TIMES_ROMAN_24);
+
+    // intercambio de buffers (porque usamos GLUT_DOUBLE)
+    glutSwapBuffers();
+}
+
+void pausa()
+{
+	glClear(GL_COLOR_BUFFER_BIT); // Limpia el búfer de color
+
+	glColor3f(1.0, 1.0, 1.0);
+    glBindTexture(GL_TEXTURE_2D, texturafondo);
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0,0); glVertex2f(0,700);
+        glTexCoord2f(1,0); glVertex2f(900,700);
+        glTexCoord2f(1,1); glVertex2f(900,0);
+        glTexCoord2f(0,1); glVertex2f(0,0);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+
+    float aux[3] ={1.0,1.0,1.0}; 
+
+    glColor3f(1.0, 1.0, 1.0);
+    glBindTexture(GL_TEXTURE_2D, texturapiso);
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0,0); glVertex2f(250,500);
+        glTexCoord2f(1,0); glVertex2f(650,500);
+        glTexCoord2f(1,1); glVertex2f(650,600);
+        glTexCoord2f(0,1); glVertex2f(250,600);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+
+	texto("CONTINUAR (C)",350,540,aux,GLUT_BITMAP_TIMES_ROMAN_24);
+
+	glColor3f(1.0, 1.0, 1.0);
+    glBindTexture(GL_TEXTURE_2D, texturapiso);
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0,0); glVertex2f(250,300);
+        glTexCoord2f(1,0); glVertex2f(650,300);
+        glTexCoord2f(1,1); glVertex2f(650,400);
+        glTexCoord2f(0,1); glVertex2f(250,400);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+
+	texto("REINICIAR ANIMACION (R)",300,340,aux,GLUT_BITMAP_TIMES_ROMAN_24);
+
+    glColor3f(1.0, 1.0, 1.0);
+    glBindTexture(GL_TEXTURE_2D, texturapiso);
+    glEnable(GL_TEXTURE_2D);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0,0); glVertex2f(250,100);
+        glTexCoord2f(1,0); glVertex2f(650,100);
+        glTexCoord2f(1,1); glVertex2f(650,200);
+        glTexCoord2f(0,1); glVertex2f(250,200);
+    glEnd();
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+
+    texto("SALIR (S)",400,140,aux,GLUT_BITMAP_TIMES_ROMAN_24);
 
     // intercambio de buffers (porque usamos GLUT_DOUBLE)
     glutSwapBuffers();
@@ -517,10 +768,13 @@ static void init01(void)
 
     Cola.inicio = NULL;
 	Cola.final = NULL;
+	Camino.inicio = NULL;
+	Camino.final = NULL;
     texturapiso = CargarTextura("vecteezy_stone-tiles-texture-in-cartoon-style_3678912.jpg");
     texturafondo = CargarTextura("png-clipart-cartoon-drawing-sky-cloud-clouds-cartoon-blue-atmosphere-thumbnail.png");
     caja = CargarTextura("g5q1_cfw8_210729-removebg-preview.png");
-    gujero = CargarTextura("gujero.png");
+    gujero = CargarTextura("agujero.png");
+    tesoro = CargarTextura("cofre.png");
 }
 
 
@@ -571,7 +825,8 @@ GLuint CargarTextura(const char *ruta)
 
 void Animacion(int num) 
 {
-
+	if(ventana != 2)
+	{
     switch(pasoAnim) {
         case 0:
             
@@ -604,10 +859,54 @@ void Animacion(int num)
             swapPartes(Raiz, Aux2->der);
             break;
     }
-    
+    caminoaux = caminoaux->sig;
+
+    if(caminoaux == NULL)
+		caminoaux = Camino.inicio->sig;
+
+	if(caminoaux->coord.x == 900)
+		escena =    (escena + 1) % 3;
+
     glutPostRedisplay();
     glutTimerFunc(200, Animacion, 0);
+	}else
+		glutTimerFunc(200, Animacion, 0);
 }
+
+
+void teclado(unsigned char tecla,int x, int y)
+{
+	if(tecla == '\r' && ventana == 0)// play a la animacion
+		{
+			ventana = 1;
+			glutDisplayFunc(display);
+			glutTimerFunc(200, Animacion, 0);
+		}
+	else 
+	if(tecla == 'S' && (ventana == 0 || ventana == 2))
+	{
+		exit(1);
+	}else 
+	if(tecla == 'P' && ventana == 1)
+	{
+		glutDisplayFunc(pausa);
+		ventana = 2;
+		glutPostRedisplay();
+	}else 
+	if(tecla == 'C' && ventana == 2)
+	{
+		ventana = 1;
+		glutDisplayFunc(display);
+	}else 
+	if(tecla == 'R' && ventana == 2)
+	{
+		ventana = 1;
+		escena = 0;
+		caminoaux = Camino.inicio;
+		glutDisplayFunc(display);
+	}
+
+}	
 
 int main(int argc, char** argv)
 {
@@ -617,15 +916,17 @@ int main(int argc, char** argv)
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(900, 700);
     glutInitWindowPosition(300, 50);
-    glutCreateWindow("Gleep al rescate");
+    glutCreateWindow("La Aventura de GLEEP");
+    
     init01();
-
     iniciarpersonaje(&Raiz);
     initobstaculos(&Cola);
-    glutDisplayFunc(display);
+    CrearCamino(&Camino);
+    caminoaux = Camino.inicio;
+
+    glutDisplayFunc(menu);
     glutReshapeFunc(reshape01);
-    glutTimerFunc(200, Animacion, 0);
-    //glutKeyboardFunc(teclado);
+    glutKeyboardFunc(teclado);
     glutMainLoop(); // loop principal
     return 0;
 }
