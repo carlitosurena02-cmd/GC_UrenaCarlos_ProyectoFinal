@@ -20,7 +20,8 @@ struct coordenada{
 };
 
 struct NodoCola{
-
+	int scene;
+	int textura;
 	struct coordenada coords[4];
 	struct NodoCola *sig;
 };
@@ -68,13 +69,17 @@ GLuint CargarTextura(const char *ruta);
 
 //Variables Globales
 struct NodoArbol *Raiz = NULL;
+struct NodoArbol *Aux = NULL;
+struct NodoArbol *Aux2 = NULL;
 struct Cola Cola;
 int texturapiso;
 int texturafondo;
 int caja;
+int gujero;
+int pasoAnim = 0;
 
 
-void enqueue(struct Cola *cola, int tam, int x, int y)
+void enqueue(struct Cola *cola, int tam, int x, int y, int escena,int textura)
 {
     struct NodoCola *nuevo = (struct NodoCola *)malloc(sizeof(struct NodoCola));
     
@@ -92,7 +97,8 @@ void enqueue(struct Cola *cola, int tam, int x, int y)
     nuevo->coords[2].y = y + dist;
     nuevo->coords[3].x = x - dist;
     nuevo->coords[3].y = y + dist;
-    
+    nuevo->scene = escena;
+    nuevo->textura = textura;
     nuevo->sig = NULL;
     
     // primer elemento de la cola
@@ -136,6 +142,16 @@ void ListinsertarParte(struct PartePersonaje **lista, int x, int y)
     nuevo->coordenadas[1] = y;
     nuevo->sig = *lista;
     *lista = nuevo;
+}
+
+void swapPartes(struct NodoArbol *nodo1, struct NodoArbol *nodo2)
+{
+    if(nodo1 == NULL || nodo2 == NULL) 
+        return;
+
+    struct PartePersonaje *temp = nodo1->parte;
+    nodo1->parte = nodo2->parte;
+    nodo2->parte = temp;
 }
 
 void insertarNodoArbol(struct NodoArbol **raiz, float color[3], char nombre[])
@@ -235,6 +251,83 @@ void iniciarpersonaje(struct NodoArbol **raiz)
 	ListinsertarParte(&((*raiz)->izq->izq->parte),19,2);
 	ListinsertarParte(&((*raiz)->izq->izq->parte),19,8);
 
+
+	// Partes auxiliares para la animacion
+	insertarNodoArbol(&Aux,aux, "Null");
+
+	insertarNodoArbol(&(Aux->izq),aux, "pieizqWalk");
+	ListinsertarParte(&(Aux->izq->parte),16,6);
+	ListinsertarParte(&(Aux->izq->parte),16,4);
+	ListinsertarParte(&(Aux->izq->parte),17,4);
+	ListinsertarParte(&(Aux->izq->parte),17,2);
+	ListinsertarParte(&(Aux->izq->parte),18,2);
+	ListinsertarParte(&(Aux->izq->parte),19,1);
+	ListinsertarParte(&(Aux->izq->parte),21,1);
+	ListinsertarParte(&(Aux->izq->parte),21,3);
+	ListinsertarParte(&(Aux->izq->parte),20,4);
+	ListinsertarParte(&(Aux->izq->parte),20,6);
+	ListinsertarParte(&(Aux->izq->parte),19,6);
+	ListinsertarParte(&(Aux->izq->parte),19,8);
+
+	insertarNodoArbol(&(Aux->der),aux, "BrazoWalk");
+	ListinsertarParte(&(Aux->der->parte),11,14);
+	ListinsertarParte(&(Aux->der->parte),12,13);
+	ListinsertarParte(&(Aux->der->parte),12,12);
+	ListinsertarParte(&(Aux->der->parte),13,11);
+	ListinsertarParte(&(Aux->der->parte),14,10);
+	ListinsertarParte(&(Aux->der->parte),15,10);
+	ListinsertarParte(&(Aux->der->parte),15,12);
+	ListinsertarParte(&(Aux->der->parte),14,13);
+
+	insertarNodoArbol(&Aux2,aux, "Null");
+
+	insertarNodoArbol(&(Aux2->izq),aux, "CuerpoWalk");
+	ListinsertarParte(&(Aux2->izq->parte),8,21);
+	ListinsertarParte(&(Aux2->izq->parte),8,6);
+	ListinsertarParte(&(Aux2->izq->parte),9,6);
+	ListinsertarParte(&(Aux2->izq->parte),9,5);
+	ListinsertarParte(&(Aux2->izq->parte),10,4);
+	ListinsertarParte(&(Aux2->izq->parte),10,3);
+	ListinsertarParte(&(Aux2->izq->parte),11,2);
+	ListinsertarParte(&(Aux2->izq->parte),12,1);
+	ListinsertarParte(&(Aux2->izq->parte),14,1);
+	ListinsertarParte(&(Aux2->izq->parte),14,3);
+	ListinsertarParte(&(Aux2->izq->parte),13,4);
+	ListinsertarParte(&(Aux2->izq->parte),13,5);
+	ListinsertarParte(&(Aux2->izq->parte),15,5);
+	ListinsertarParte(&(Aux2->izq->parte),16,6);
+	ListinsertarParte(&(Aux2->izq->parte),17,6);
+	ListinsertarParte(&(Aux2->izq->parte),18,7);
+	ListinsertarParte(&(Aux2->izq->parte),19,8);
+	ListinsertarParte(&(Aux2->izq->parte),19,9);
+	ListinsertarParte(&(Aux2->izq->parte),20,9);
+	ListinsertarParte(&(Aux2->izq->parte),20,13);
+	ListinsertarParte(&(Aux2->izq->parte),24,13);
+	ListinsertarParte(&(Aux2->izq->parte),25,14);
+	ListinsertarParte(&(Aux2->izq->parte),25,15);
+	ListinsertarParte(&(Aux2->izq->parte),24,16);
+	ListinsertarParte(&(Aux2->izq->parte),21,16);
+	ListinsertarParte(&(Aux2->izq->parte),20,17);
+	ListinsertarParte(&(Aux2->izq->parte),20,18);
+	ListinsertarParte(&(Aux2->izq->parte),23,18);
+	ListinsertarParte(&(Aux2->izq->parte),23,19);
+	ListinsertarParte(&(Aux2->izq->parte),25,19);
+	ListinsertarParte(&(Aux2->izq->parte),25,21);
+	ListinsertarParte(&(Aux2->izq->parte),24,22);
+	ListinsertarParte(&(Aux2->izq->parte),18,22);
+	ListinsertarParte(&(Aux2->izq->parte),18,23);
+
+	insertarNodoArbol(&(Aux2->der),aux, "BrazoWalk");
+	ListinsertarParte(&(Aux2->der->parte),12,13);
+	ListinsertarParte(&(Aux2->der->parte),11,12);
+	ListinsertarParte(&(Aux2->der->parte),10,11);
+	ListinsertarParte(&(Aux2->der->parte),10,9);
+	ListinsertarParte(&(Aux2->der->parte),11,9);
+	ListinsertarParte(&(Aux2->der->parte),12,10);
+	ListinsertarParte(&(Aux2->der->parte),13,11);
+	ListinsertarParte(&(Aux2->der->parte),14,12);
+
+
 	aux[0]=1.0;
 	aux[1]=1.0;
 	aux[2]=1.0;
@@ -310,7 +403,6 @@ void iniciarpersonaje(struct NodoArbol **raiz)
 	ListinsertarParte(&((*raiz)->der->der->parte),5,21);
 	ListinsertarParte(&((*raiz)->der->der->parte),5,18);
 
-
 	aux[0]=0.0;
 	aux[1]=0.0;
 	aux[2]=0.0;
@@ -324,16 +416,34 @@ void iniciarpersonaje(struct NodoArbol **raiz)
 
 void initobstaculos(struct Cola *cola)
 {
-	enqueue(cola, 50, 400,125);
+	//Escena 1
+	enqueue(cola, 60, 350,130,1,caja);
+	enqueue(cola, 60, 410,130,1,caja);
+	enqueue(cola, 60, 410,190,1,caja);
+	enqueue(cola, 60, 470,130,1,caja);
+	enqueue(cola, 60, 470,190,1,caja);
+	enqueue(cola, 60, 470,250,1,caja);
+	enqueue(cola, 60, 530,130,1,caja);
+	enqueue(cola, 60, 530,190,1,caja);
+	enqueue(cola, 60, 530,250,1,caja);
+	enqueue(cola, 60, 530,310,1,caja);
+	enqueue(cola, 350,735,-75,1,gujero);
+	enqueue(cola, 60, 710,370,1,caja);
+	enqueue(cola, 60, 770,370,1,caja);
+	enqueue(cola, 60, 830,370,1,caja);
+
+	//Escena 2
+	/*enqueue(cola, 900,450,-350,1,gujero);
+	enqueue(cola, 60, 470,190,1,caja);*/
 }
 
 void dibujarobstaculos(struct Cola *cola)
 {
-	while(cola->inicio != NULL)
+	struct NodoCola *aux = cola->inicio;
+	while(aux != NULL)
 	{
-		struct NodoCola *aux = dequeue(cola);
-
-		glBindTexture(GL_TEXTURE_2D, caja);
+		glColor3f(1.0, 1.0, 1.0);
+		glBindTexture(GL_TEXTURE_2D, aux->textura);
 	    glEnable(GL_TEXTURE_2D);
 	    glBegin(GL_QUADS);
 	        glTexCoord2f(0,0); glVertex2f(aux->coords[0].x,aux->coords[0].y);
@@ -344,6 +454,7 @@ void dibujarobstaculos(struct Cola *cola)
 	    glBindTexture(GL_TEXTURE_2D, 0);
 	    glDisable(GL_TEXTURE_2D);
 
+	    aux = aux->sig;
 	}
 }
 
@@ -354,12 +465,18 @@ static void reshape01(int w, int h)
    	glLoadIdentity (); // y cargarla
    	// establecer a toda la pantalla
    	gluOrtho2D (0.0, (GLdouble) w, 0.0, (GLdouble) h);
+
+   	glMatrixMode(GL_MODELVIEW);  // Volver a MODELVIEW
+    glLoadIdentity();
+    
+    glutPostRedisplay();  // Forzar redibujado
 }
 
 void display() 
 {
     glClear(GL_COLOR_BUFFER_BIT); // Limpia el búfer de color
 
+    glColor3f(1.0, 1.0, 1.0);
     glBindTexture(GL_TEXTURE_2D, texturafondo);
     glEnable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
@@ -371,6 +488,7 @@ void display()
     glBindTexture(GL_TEXTURE_2D, 0);
     glDisable(GL_TEXTURE_2D);
 
+    glColor3f(1.0, 1.0, 1.0);
     glBindTexture(GL_TEXTURE_2D, texturapiso);
     glEnable(GL_TEXTURE_2D);
     glBegin(GL_QUADS);
@@ -396,6 +514,13 @@ static void init01(void)
    	glShadeModel (GL_FLAT); // El valor default es GL_SMOOTH
    	glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    Cola.inicio = NULL;
+	Cola.final = NULL;
+    texturapiso = CargarTextura("vecteezy_stone-tiles-texture-in-cartoon-style_3678912.jpg");
+    texturafondo = CargarTextura("png-clipart-cartoon-drawing-sky-cloud-clouds-cartoon-blue-atmosphere-thumbnail.png");
+    caja = CargarTextura("g5q1_cfw8_210729-removebg-preview.png");
+    gujero = CargarTextura("gujero.png");
 }
 
 
@@ -444,6 +569,45 @@ GLuint CargarTextura(const char *ruta)
     return texID;
 }
 
+void Animacion(int num) 
+{
+
+    switch(pasoAnim) {
+        case 0:
+            
+            break;
+            
+        case 1:
+            swapPartes(Raiz->izq->izq, Aux->izq);
+            swapPartes(Raiz, Aux->der);
+            break;
+            
+        case 2:
+            swapPartes(Raiz->izq, Aux2->izq);
+            swapPartes(Raiz, Aux2->der);
+            break;
+    }
+    
+    pasoAnim = (pasoAnim + 1) % 3;
+    
+    switch(pasoAnim) {
+        case 0:
+            break;
+            
+        case 1:
+            swapPartes(Raiz->izq->izq, Aux->izq);
+            swapPartes(Raiz, Aux->der);
+            break;
+            
+        case 2:
+            swapPartes(Raiz->izq, Aux2->izq);
+            swapPartes(Raiz, Aux2->der);
+            break;
+    }
+    
+    glutPostRedisplay();
+    glutTimerFunc(200, Animacion, 0);
+}
 
 int main(int argc, char** argv)
 {
@@ -456,16 +620,11 @@ int main(int argc, char** argv)
     glutCreateWindow("Gleep al rescate");
     init01();
 
-    Cola.inicio = NULL;
-	Cola.final = NULL;
-    texturapiso = CargarTextura("vecteezy_stone-tiles-texture-in-cartoon-style_3678912.jpg");
-    texturafondo = CargarTextura("png-clipart-cartoon-drawing-sky-cloud-clouds-cartoon-blue-atmosphere-thumbnail.png");
-    caja = CargarTextura("g5q1_cfw8_210729-removebg-preview.png");
-
     iniciarpersonaje(&Raiz);
     initobstaculos(&Cola);
     glutDisplayFunc(display);
     glutReshapeFunc(reshape01);
+    glutTimerFunc(200, Animacion, 0);
     //glutKeyboardFunc(teclado);
     glutMainLoop(); // loop principal
     return 0;
