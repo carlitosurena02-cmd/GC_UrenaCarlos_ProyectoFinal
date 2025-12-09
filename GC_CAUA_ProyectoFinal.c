@@ -56,14 +56,25 @@ struct NodoArbol{
 
 
 //Prototipos de funciones
+void enqueue(struct Cola *cola, int tam, int x, int y, int escena,int textura);
+void insertarcamino(struct Camino *cola, int x, int y);
 void ListinsertarParte(struct PartePersonaje **lista, int x, int y);
+void swapPartes(struct NodoArbol *nodo1, struct NodoArbol *nodo2);
 void insertarNodoArbol(struct NodoArbol **raiz, float color[3], char nombre[]);
 void dibujarpersonaje(struct NodoArbol *raiz);
 void iniciarpersonaje(struct NodoArbol **raiz);
+void initobstaculos(struct Cola *cola);
+void dibujarobstaculos(struct Cola *cola);
+void CrearCamino(struct Camino *camino);
 static void reshape01(int w, int h);
+void texto(char *texto,int x, int y, float color[],void* font);
 void display();
+void menu();
+void pausa();
 static void init01(void);
 GLuint CargarTextura(const char *ruta);
+void Animacion(int num) ;
+void teclado(unsigned char tecla,int x, int y);
 
 
 //Variables Globales
@@ -137,24 +148,6 @@ void insertarcamino(struct Camino *cola, int x, int y)
     }
 }
 
-struct NodoCola* dequeue(struct Cola *cola)
-{
-    if(cola->inicio == NULL) {
-        printf("Error: La cola está vacía\n");
-        return NULL;
-    }
-    
-    struct NodoCola *aux = cola->inicio;
-    cola->inicio = cola->inicio->sig;
-    
-    if(cola->inicio == NULL) {
-        cola->final = NULL;
-    }
-    
-    aux->sig = NULL;
-    
-    return aux;  
-}
 
 void ListinsertarParte(struct PartePersonaje **lista, int x, int y)
 {
